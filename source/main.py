@@ -1,6 +1,14 @@
-from Pokemon import WaterPokemon, FirePokemon, PlantPokemon
+"""
+The Pokemon Game
+"""
+
+from pokemon import WaterPokemon, PlantPokemon
 
 def main():
+    """
+    Creates a few pokemon and let them fight.
+    """
+
     #Create pokemons
     shiggy = WaterPokemon("Shiggy", 7)
     bisasam = PlantPokemon("Bisasam", 2)
