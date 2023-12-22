@@ -8,7 +8,7 @@ This repo shows a basic example of CI/CD in python with github actions
 - ✏️ Code coverage with coverage module
 
 ## Output
-![](img/ci-report.png)
+![](images/ci-report.png)
 
 ---
 
