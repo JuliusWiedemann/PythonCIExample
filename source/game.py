@@ -4,6 +4,7 @@ The Pokemon Game
 
 import time
 import sys
+# pylint: disable=E0401 # False positive
 from pokemon import Pokemon
 
 def welcome():
