@@ -2,6 +2,8 @@
 Module to control pokemon and different poke types.
 """
 
+import random
+
 class Pokemon:
     """
     Class with all relevant data for a Pokemon.
@@ -16,14 +18,25 @@ class Pokemon:
         self._level = 1
         self._levelProgress = 0
         self._isAlive = True
+        self._strength = random.randint(1, 30)
 
     def __eq__(self, other):
         return self._name == other.getName()
 
     def __str__(self):
-        return f"Name: {self._name}\nType: {self._pokeType}\nLevel: {self._level}\nHealth: {self._health}"
+        return f"Name: {self._name}\nType: {self._pokeType}\nLevel: {self._level}\nHealth: {self._health}\nStrength: {self._strength}"
 
-    def _attack(self, opponent, damage):
+    def _levelUp(self):
+        self._level += 1
+        print(f"Pokemon {self._name} is now level {self._level}!")
+        self._maxHealth += 10
+        self._health += 10
+
+    def attack(self, opponent):
+        """
+        Attacks another pokemon by calculating the attack factor.
+        After the fight, the attacking pokemon receives XP.
+        """
         if not self._isAlive:
             print("Pokemon is dead already!")
         elif not opponent.getIsAlive():
@@ -31,7 +44,7 @@ class Pokemon:
         else:
             print(f"{self._name} attacks {opponent.getName()}!")
             attackFactor = self.getAttackFactor(self._pokeType, opponent.getPokeType())
-            attackDamage = damage * attackFactor
+            attackDamage = self._strength * attackFactor
             if attackFactor == 1:
                 print("Effective")
             elif attackFactor == 0.5:
@@ -40,12 +53,6 @@ class Pokemon:
                 print("Very effective")
             opponent.receiveDamage(attackDamage)
             self.earnXp(attackDamage)
-
-    def _levelUp(self):
-        self._level += 1
-        print(f"Pokemon {self._name} is now level {self._level}!")
-        self._maxHealth += 10
-        self._health += 10
 
     def receiveDamage(self, damage):
         """
@@ -57,7 +64,6 @@ class Pokemon:
         if self._health <= 0:
             self._isAlive = False
             print(f"Pokemon {self._name} is dead!")
-
 
     def earnXp(self, xp):
         """
@@ -89,6 +95,9 @@ class Pokemon:
     def getIsAlive(self):
         return self._isAlive
 
+    def getStrength(self):
+        return self._strength
+
     @staticmethod
     def getAttackFactor(attackType, defendType):
         """
@@ -104,36 +113,3 @@ class Pokemon:
             ("Plant", "Fire"): 0.5,
         }
         return attackTypes.get((attackType, defendType), 1)
-
-
-class FirePokemon(Pokemon):
-    """
-    Pokemon with the type fire
-    """
-    def __init__(self, name, number):
-        super().__init__(name, number, "Fire")
-
-    def inferno(self, opponent):
-        self._attack(opponent, 15)
-
-
-class WaterPokemon(Pokemon):
-    """
-    Pokemon with the type water
-    """
-    def __init__(self, name, number):
-        super().__init__(name, number, "Water")
-
-    def waterGun(self, opponent):
-        self._attack(opponent, 20)
-
-
-class PlantPokemon(Pokemon):
-    """
-    Pokemon with the type plant
-    """
-    def __init__(self, name, number):
-        super().__init__(name, number, "Plant")
-
-    def appleAcid(self, opponent):
-        self._attack(opponent, 10)

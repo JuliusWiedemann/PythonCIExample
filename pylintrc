@@ -1,50 +1,18 @@
 [MAIN]
-
-# Files or directories to be skipped. They should be base names, not paths.
-ignore=main.py
-
-# Add files or directories matching the regular expressions patterns to the
-# ignore-list. The regex matches against paths and can be in Posix or Windows
-# format. Because '\\' represents the directory delimiter on Windows systems,
-# it can't be used as an escape character.
 ignore-paths=test
 
-
 [BASIC]
-
-# Naming style matching correct argument names.
 argument-naming-style=camelCase
-
-# Naming style matching correct attribute names.
 attr-naming-style=camelCase
-
-# Naming style matching correct class attribute names.
 class-attribute-naming-style=camelCase
-
-# Minimum line length for functions/classes that require docstrings, shorter
-# ones are exempt.
 docstring-min-length=5
-
-# Naming style matching correct function names.
 function-naming-style=camelCase
-
-# Naming style matching correct method names.
 method-naming-style=camelCase
-
-# Naming style matching correct module names.
 module-naming-style=camelCase
-
-# Naming style matching correct variable names.
 variable-naming-style=camelCase
 
-
 [DESIGN]
-
-# Maximum number of attributes for a class (see R0902).
 max-attributes=10
 
-
 [FORMAT]
-
-# Maximum number of characters on a single line.
 max-line-length=160
