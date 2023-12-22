@@ -31,4 +31,4 @@ jobs:
         coverage report -m 
 
     - name: Run static code analysis
-      run: pylint source
+      run: pylint main.py source tests
