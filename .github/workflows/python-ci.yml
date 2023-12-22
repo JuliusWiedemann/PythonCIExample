@@ -31,7 +31,7 @@ jobs:
         coverage report -m > coverage_report.txt
 
     - name: Run static code analysis
-      run: pylint source > pylint_report.txt
+      run: pylint source
 
     - name: Upload coverage and code analysis 
       uses: actions/upload-artifact@v4
@@ -39,4 +39,3 @@ jobs:
         name: code-report
         path: |
           coverage_report.txt
-          pylint_report.txt
