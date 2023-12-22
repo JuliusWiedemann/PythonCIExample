@@ -1,5 +1,5 @@
 [MAIN]
-ignore-paths=test
+ignore-paths=tests
 
 [BASIC]
 argument-naming-style=camelCase
