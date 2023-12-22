@@ -1,5 +1,6 @@
 [MAIN]
 ignore-paths=tests
+fail-under=8
 
 [BASIC]
 argument-naming-style=camelCase
