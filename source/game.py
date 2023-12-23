@@ -19,7 +19,7 @@ def createNewPokemon():
     Returns the new pokemon
     """
     name = input("Please enter the name of your pokemon: ")
-    if name is None:
+    if name is None or name is "":
         print("Invalid name")
         return False
 

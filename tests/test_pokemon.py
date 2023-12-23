@@ -19,7 +19,7 @@ class TestPokemon(unittest.TestCase):
         del self.pokemon4
 
     @staticmethod
-    def helper_reset_string_output(mock_stdout):
+    def helper_resetStringOutput(mock_stdout):
         mock_stdout.truncate(0)
         mock_stdout.seek(0)
 
@@ -87,7 +87,7 @@ class TestPokemon(unittest.TestCase):
         self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!")
 
-        self.helper_reset_string_output(mock_stdout)
+        self.helper_resetStringOutput(mock_stdout)
 
         self.pokemon2.attack(self.pokemon1)
         self.assertEqual(mock_stdout.getvalue().strip(), "Luca attacks Jake!")
@@ -100,12 +100,12 @@ class TestPokemon(unittest.TestCase):
         self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nEffective")
 
-        self.helper_reset_string_output(mock_stdout)
+        self.helper_resetStringOutput(mock_stdout)
 
         self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nNot very effective")
 
-        self.helper_reset_string_output(mock_stdout)
+        self.helper_resetStringOutput(mock_stdout)
 
         self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nVery effective")
@@ -152,7 +152,7 @@ class TestPokemon(unittest.TestCase):
         self.pokemon2.earnXp(100)
         self.assertEqual(self.pokemon2._levelProgress, 0)
         mock_levelUp.assert_called_once()
-        
+
         mock_levelUp.reset_mock()
 
         self.assertEqual(self.pokemon3._levelProgress, 0)
@@ -168,7 +168,7 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(self.pokemon1._health, 100)
         self.assertEqual(mock_stdout.getvalue().strip(), "Pokemon Jake was healed.")
 
-        self.helper_reset_string_output(mock_stdout)
+        self.helper_resetStringOutput(mock_stdout)
 
         self.pokemon2._health = 10
         self.pokemon2._maxHealth = 42

@@ -1,6 +1,3 @@
-[MAIN]
-ignore-paths=tests
-
 [BASIC]
 argument-naming-style=camelCase
 attr-naming-style=camelCase
