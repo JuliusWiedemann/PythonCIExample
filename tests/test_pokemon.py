@@ -11,9 +11,6 @@ class TestPokemon(unittest.TestCase):
         self.pokemon2 = Pokemon("Luca", 1, "Water")
         self.pokemon3 = Pokemon("Maria", 999, "Plant")
         self.pokemon4 = Pokemon("", -1, "Invalid")
-
-        self.capturedOutput = io.StringIO()  
-        sys.stdout = self.capturedOutput
   
     def tearDown(self):
         del self.pokemon1
@@ -21,11 +18,10 @@ class TestPokemon(unittest.TestCase):
         del self.pokemon3
         del self.pokemon4
 
-        sys.stdout = sys.__stdout__ 
-
-    def helper_reset_string_output(self):
-        self.capturedOutput.truncate(0)
-        self.capturedOutput.seek(0)
+    @staticmethod
+    def helper_reset_string_output(mock_stdout):
+        mock_stdout.truncate(0)
+        mock_stdout.seek(0)
 
     def test_init(self):
         self.assertEqual(self.pokemon1._name, "Jake")
@@ -46,19 +42,21 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(self.pokemon3 == self.pokemon4, False)
         self.assertEqual(self.pokemon3 == self.pokemon3, True)
 
-    def test_str(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_str(self, mock_stdout):
         self.pokemon1._strength = 20
 
         print(self.pokemon1)
-        self.assertEqual(self.capturedOutput.getvalue(), "Name: Jake\nType: Fire\nLevel: 1\nHealth: 100\nStrength: 20\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Name: Jake\nType: Fire\nLevel: 1\nHealth: 100\nStrength: 20")
 
-    def test_levelUp(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_levelUp(self, mock_stdout):
         self.assertEqual(self.pokemon1._level, 1, "Level of a new pokemon must be 1")
         self.assertEqual(self.pokemon1._maxHealth, 100, "MaxHealth of a new pokemon must be 100")
         self.assertEqual(self.pokemon1._health, 100, "Health of a new pokemon must be 100")
 
         self.pokemon1._levelUp()  
-        self.assertEqual(self.capturedOutput.getvalue(), f"Pokemon Jake is now level 2!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), f"Pokemon Jake is now level 2!")
 
         self.assertEqual(self.pokemon1._level, 2)
         self.assertEqual(self.pokemon1._maxHealth, 110)
@@ -68,57 +66,61 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(self.pokemon2._maxHealth, 100, "MaxHealth of a new pokemon must be 100")
         self.assertEqual(self.pokemon2._health, 100, "Health of a new pokemon must be 100")
 
-    def test_attack_attackerDead(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_attack_attackerDead(self, mock_stdout):
         self.pokemon1._isAlive = False
 
         self.pokemon1.attack(self.pokemon2)
-        self.assertEqual(self.capturedOutput.getvalue(), "Pokemon is dead already!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Pokemon is dead already!")
 
-    def test_attack_opponentDead(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_attack_opponentDead(self, mock_stdout):
         self.pokemon1._isAlive = False
 
         self.pokemon2.attack(self.pokemon1)
-        self.assertEqual(self.capturedOutput.getvalue(), "Opponent is dead already!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Opponent is dead already!")
 
-    def test_attack_printAttackMessage(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_attack_printAttackMessage(self, mock_stdout):
         with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0), \
              patch("source.pokemon.Pokemon.receiveDamage"):
             self.pokemon1.attack(self.pokemon2)
 
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake attacks Luca!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!")
 
-        self.helper_reset_string_output()
+        self.helper_reset_string_output(mock_stdout)
 
         with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0), \
              patch("source.pokemon.Pokemon.receiveDamage"):
             self.pokemon2.attack(self.pokemon1)
 
-        self.assertEqual(self.capturedOutput.getvalue(), "Luca attacks Jake!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Luca attacks Jake!")
 
-    def test_attack_printAttackFactor(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_attack_printAttackFactor(self, mock_stdout):
         with patch("source.pokemon.Pokemon.getAttackFactor", return_value=1), \
              patch("source.pokemon.Pokemon.receiveDamage"), \
              patch("source.pokemon.Pokemon.earnXp"):
             self.pokemon1.attack(self.pokemon2)
 
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake attacks Luca!\nEffective\n")
-        self.helper_reset_string_output()
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nEffective")
+        self.helper_reset_string_output(mock_stdout)
 
         with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0.5), \
              patch("source.pokemon.Pokemon.receiveDamage"), \
              patch("source.pokemon.Pokemon.earnXp"):
             self.pokemon1.attack(self.pokemon2)
 
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake attacks Luca!\nNot very effective\n")
-        self.helper_reset_string_output()
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nNot very effective")
+        self.helper_reset_string_output(mock_stdout)
 
         with patch("source.pokemon.Pokemon.getAttackFactor", return_value=2), \
              patch("source.pokemon.Pokemon.receiveDamage"), \
              patch("source.pokemon.Pokemon.earnXp"):
             self.pokemon1.attack(self.pokemon2)
 
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake attacks Luca!\nVery effective\n")
-        self.helper_reset_string_output()
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nVery effective")
+        self.helper_reset_string_output(mock_stdout)
 
     def test_attack_calculateAttackDamage(self):
         self.pokemon1._strength = 10
@@ -133,19 +135,21 @@ class TestPokemon(unittest.TestCase):
             mock_receiveDamage.assert_called_with(20)
             mock_earnXp.assert_called_with(20)
 
-    def test_receiveDamage_alive(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_receiveDamage_alive(self, mock_stdout):
         self.assertEqual(self.pokemon1._health, 100)
 
         self.pokemon1.receiveDamage(10)
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake looses 10 health!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake looses 10 health!")
         self.assertEqual(self.pokemon1._health, 90)
         self.assertEqual(self.pokemon1._isAlive, True)  
 
-    def test_receiveDamage_dead(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_receiveDamage_dead(self, mock_stdout):
         self.assertEqual(self.pokemon1._health, 100)
 
         self.pokemon1.receiveDamage(100)
-        self.assertEqual(self.capturedOutput.getvalue(), "Jake looses 100 health!\nPokemon Jake is dead!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Jake looses 100 health!\nPokemon Jake is dead!")
         self.assertEqual(self.pokemon1._health, 0)  
         self.assertEqual(self.pokemon1._isAlive, False)    
 
@@ -171,21 +175,22 @@ class TestPokemon(unittest.TestCase):
             self.assertEqual(self.pokemon3._levelProgress, 30)
             self.assertEqual(mock_levelUp.call_count, 3)
 
-    def test_useHealthPotion(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_useHealthPotion(self, mock_stdout):
         self.pokemon1._health = 0
 
         self.pokemon1.useHealthPotion()
         self.assertEqual(self.pokemon1._health, 100)
-        self.assertEqual(self.capturedOutput.getvalue(), "Pokemon Jake was healed.\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Pokemon Jake was healed.")
 
-        self.helper_reset_string_output()
+        self.helper_reset_string_output(mock_stdout)
 
         self.pokemon2._health = 10
         self.pokemon2._maxHealth = 42
 
         self.pokemon2.useHealthPotion()
         self.assertEqual(self.pokemon2._health, 42)
-        self.assertEqual(self.capturedOutput.getvalue(), "Pokemon Luca was healed.\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Pokemon Luca was healed.")
 
     def test_getName(self):
         self.assertEqual(self.pokemon1.getName(), "Jake")

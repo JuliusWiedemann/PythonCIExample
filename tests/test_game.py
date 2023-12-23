@@ -1,4 +1,5 @@
-import unittest 
+import unittest
+from unittest.mock import patch
 import main
 from source.game import *
 
@@ -6,14 +7,8 @@ import io
 import sys
 
 class TestGame(unittest.TestCase):
-    def setUp(self):
-        self.capturedOutput = io.StringIO()  
-        sys.stdout = self.capturedOutput
-  
-    def tearDown(self):
-        sys.stdout = sys.__stdout__ 
-
-    def test_welcome(self):
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_welcome(self, mock_stdout):
         welcome()
-        self.assertEqual(self.capturedOutput.getvalue(), "Welcome to the pokemon game!\n")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Welcome to the pokemon game!")
 
