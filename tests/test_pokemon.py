@@ -79,61 +79,47 @@ class TestPokemon(unittest.TestCase):
 
         self.pokemon2.attack(self.pokemon1)
         self.assertEqual(mock_stdout.getvalue().strip(), "Opponent is dead already!")
-
+ 
+    @patch("source.pokemon.Pokemon.getAttackFactor", return_value = 0)
+    @patch("source.pokemon.Pokemon.receiveDamage")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_attack_printAttackMessage(self, mock_stdout):
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0), \
-             patch("source.pokemon.Pokemon.receiveDamage"):
-            self.pokemon1.attack(self.pokemon2)
-
+    def test_attack_printAttackMessage(self, mock_stdout, mock_receiveDamage, mock_getAttackFactor):
+        self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!")
 
         self.helper_reset_string_output(mock_stdout)
 
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0), \
-             patch("source.pokemon.Pokemon.receiveDamage"):
-            self.pokemon2.attack(self.pokemon1)
-
+        self.pokemon2.attack(self.pokemon1)
         self.assertEqual(mock_stdout.getvalue().strip(), "Luca attacks Jake!")
 
+    @patch("source.pokemon.Pokemon.getAttackFactor", side_effect = [1, 0.5, 2])
+    @patch("source.pokemon.Pokemon.receiveDamage")
+    @patch("source.pokemon.Pokemon.earnXp")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_attack_printAttackFactor(self, mock_stdout):
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=1), \
-             patch("source.pokemon.Pokemon.receiveDamage"), \
-             patch("source.pokemon.Pokemon.earnXp"):
-            self.pokemon1.attack(self.pokemon2)
-
+    def test_attack_printAttackFactor(self, mock_stdout, mock_earnXp, mock_receiveDamage, mock_getAttackFactor, ):
+        self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nEffective")
+
         self.helper_reset_string_output(mock_stdout)
 
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=0.5), \
-             patch("source.pokemon.Pokemon.receiveDamage"), \
-             patch("source.pokemon.Pokemon.earnXp"):
-            self.pokemon1.attack(self.pokemon2)
-
+        self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nNot very effective")
+
         self.helper_reset_string_output(mock_stdout)
 
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=2), \
-             patch("source.pokemon.Pokemon.receiveDamage"), \
-             patch("source.pokemon.Pokemon.earnXp"):
-            self.pokemon1.attack(self.pokemon2)
-
+        self.pokemon1.attack(self.pokemon2)
         self.assertEqual(mock_stdout.getvalue().strip(), "Jake attacks Luca!\nVery effective")
-        self.helper_reset_string_output(mock_stdout)
 
-    def test_attack_calculateAttackDamage(self):
+    @patch("source.pokemon.Pokemon.getAttackFactor", return_value = 2)
+    @patch("source.pokemon.Pokemon.receiveDamage")
+    @patch("source.pokemon.Pokemon.earnXp")
+    def test_attack_calculateAttackDamage(self, mock_earnXp, mock_receiveDamage, mock_getAttackFactor):
         self.pokemon1._strength = 10
 
-        with patch("source.pokemon.Pokemon.getAttackFactor", return_value=2) as mock_getAttackFactor, \
-             patch("source.pokemon.Pokemon.receiveDamage") as mock_receiveDamage, \
-             patch("source.pokemon.Pokemon.earnXp") as mock_earnXp:
-
-            self.pokemon1.attack(self.pokemon2)
-
-            mock_getAttackFactor.assert_called_once()
-            mock_receiveDamage.assert_called_with(20)
-            mock_earnXp.assert_called_with(20)
+        self.pokemon1.attack(self.pokemon2)
+        mock_getAttackFactor.assert_called_once()
+        mock_receiveDamage.assert_called_with(20)
+        mock_earnXp.assert_called_with(20)
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_receiveDamage_alive(self, mock_stdout):
@@ -153,27 +139,26 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(self.pokemon1._health, 0)  
         self.assertEqual(self.pokemon1._isAlive, False)    
 
-    def test_earnXp(self):
-        with patch("source.pokemon.Pokemon._levelUp") as mock_levelUp:
-            self.assertEqual(self.pokemon1._levelProgress, 0)
+    @patch("source.pokemon.Pokemon._levelUp")
+    def test_earnXp(self, mock_levelUp):
+        self.assertEqual(self.pokemon1._levelProgress, 0)
+        self.pokemon1.earnXp(90)
+        self.assertEqual(self.pokemon1._levelProgress, 90)
+        mock_levelUp.assert_not_called()
 
-            self.pokemon1.earnXp(90)
-            self.assertEqual(self.pokemon1._levelProgress, 90)
-            mock_levelUp.assert_not_called()
+        mock_levelUp.reset_mock()
 
-        with patch("source.pokemon.Pokemon._levelUp") as mock_levelUp:
-            self.assertEqual(self.pokemon2._levelProgress, 0)
+        self.assertEqual(self.pokemon2._levelProgress, 0)
+        self.pokemon2.earnXp(100)
+        self.assertEqual(self.pokemon2._levelProgress, 0)
+        mock_levelUp.assert_called_once()
+        
+        mock_levelUp.reset_mock()
 
-            self.pokemon2.earnXp(100)
-            self.assertEqual(self.pokemon2._levelProgress, 0)
-            mock_levelUp.assert_called_once()
-
-        with patch("source.pokemon.Pokemon._levelUp") as mock_levelUp:
-            self.assertEqual(self.pokemon3._levelProgress, 0)
-
-            self.pokemon3.earnXp(330)
-            self.assertEqual(self.pokemon3._levelProgress, 30)
-            self.assertEqual(mock_levelUp.call_count, 3)
+        self.assertEqual(self.pokemon3._levelProgress, 0)
+        self.pokemon3.earnXp(330)
+        self.assertEqual(self.pokemon3._levelProgress, 30)
+        self.assertEqual(mock_levelUp.call_count, 3)
 
     @patch("sys.stdout", new_callable=io.StringIO)
     def test_useHealthPotion(self, mock_stdout):
