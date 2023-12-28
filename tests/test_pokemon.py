@@ -1,3 +1,5 @@
+# pylint: disable=C,protected-access,unused-argument,too-many-public-methods,wildcard-import,unused-wildcard-import
+
 import unittest 
 from unittest.mock import patch
 from source.pokemon import Pokemon
