@@ -62,7 +62,8 @@ class Pokemon:
         print(f"{self._name} looses {damage} health!")
         self._health -= damage
         if self._health <= 0:
-            self._isAlive = False
+            #Intentional Bug
+            #self._isAlive = False
             print(f"Pokemon {self._name} is dead!")
 
     def earnXp(self, xp):
