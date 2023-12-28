@@ -3,7 +3,6 @@ from unittest.mock import patch
 from source.pokemon import Pokemon
 
 import io
-import sys
 
 class TestPokemon(unittest.TestCase):
     def setUp(self):
@@ -56,7 +55,7 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(self.pokemon1._health, 100, "Health of a new pokemon must be 100")
 
         self.pokemon1._levelUp()  
-        self.assertEqual(mock_stdout.getvalue().strip(), f"Pokemon Jake is now level 2!")
+        self.assertEqual(mock_stdout.getvalue().strip(), "Pokemon Jake is now level 2!")
 
         self.assertEqual(self.pokemon1._level, 2)
         self.assertEqual(self.pokemon1._maxHealth, 110)

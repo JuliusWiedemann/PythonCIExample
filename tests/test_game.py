@@ -4,7 +4,6 @@ import main
 from source.game import *
 
 import io
-import sys
 
 class TestGame(unittest.TestCase):
     def setUp(self):

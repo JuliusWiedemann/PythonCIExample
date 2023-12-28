@@ -3,7 +3,6 @@ The Pokemon Game
 """
 
 import time
-import sys
 # pylint: disable=E0401 # False positive
 from pokemon import Pokemon
 
@@ -19,7 +18,7 @@ def createNewPokemon():
     Returns the new pokemon
     """
     name = input("Please enter the name of your pokemon: ")
-    if name is None or name is "":
+    if name is None or name == "":
         print("Invalid name")
         return False
 
