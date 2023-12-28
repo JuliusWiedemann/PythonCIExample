@@ -66,10 +66,6 @@ class Pokemon:
             print(f"Pokemon {self._name} is dead!")
 
     def earnXp(self, xp):
-        """
-        Training of a pokemon.
-        Earns XP and increases the level of a pokemon.
-        """
         self._levelProgress += xp
 
         while self._levelProgress >= 100:
