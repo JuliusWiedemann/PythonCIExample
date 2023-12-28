@@ -66,13 +66,6 @@ def viewPokemonStats(pokemonStorage):
     if pokemon:
         print(pokemon)
 
-def exitGame():
-    """
-    Exits the pokemon game
-    """
-    print("Bye")
-    sys.exit(0)
-
 def getPokemon(pokemonStorage, name):
     """
     Searches a pokemon by name from the pokemon storage and returns it
@@ -106,7 +99,8 @@ def main():
         elif choice == "3":
             viewPokemonStats(pokemonStorage)
         elif choice in ("q", "Q"):
-            exitGame()
+            game = False
+            print("Bye")
         else:
             print("Invalid option.")
 
