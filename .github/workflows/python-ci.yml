@@ -3,7 +3,7 @@ name: Python CI Example
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  setup:
+  build:
     runs-on: ubuntu-latest
     steps:
 
@@ -20,29 +20,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-  static_analysis:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-
     - name: Run type checker
       run: |
         mypy source | tee mypy_output.txt
         MYPY_WARNINGS=$(grep -c 'note: ' mypy_output.txt)
         echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
-      continue-on-error: true
 
     - name: Run static code analysis
       run: |
         pylint --output-format=parseable main.py source tests | tee pylint_output.txt
-        PYLINT_SCORE=$(ggrep -oP 'Your code has been rated at \K[^/]+' pylint_output.txt)
+        PYLINT_SCORE=$(grep -oP 'Your code has been rated at \K[^/]+' pylint_output.txt)
         echo "pylint_score=${PYLINT_SCORE" >> $GITHUB_ENV
-      continue-on-error: true
 
-  dynamic_analysis:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
+    - name: Run unittests
+      run: |
+        python -m unittest discover -v
 
     - name: Run coverage
       run: |
@@ -52,15 +44,6 @@ jobs:
 
         COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
         echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
-
-    - name: Run unittests
-      run: |
-        python -m unittest discover -v
-       
-  create_badges:
-    runs-on: ubuntu-latest
-    needs: [static_analysis, dynamic_analysis]
-    steps:
 
     - name: Create mypy warning badge
       uses: schneegans/dynamic-badges-action@v1.7.0
