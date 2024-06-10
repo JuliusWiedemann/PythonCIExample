@@ -30,7 +30,7 @@ jobs:
       run: |
         pylint --output-format=parseable main.py source tests | tee pylint_output.txt
         PYLINT_SCORE=$(grep -oP 'Your code has been rated at \K[^/]+' pylint_output.txt)
-        echo "pylint_score=${PYLINT_SCORE" >> $GITHUB_ENV
+        echo "pylint_score=${PYLINT_SCORE}" >> $GITHUB_ENV
 
     - name: Run unittests
       run: |
