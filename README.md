@@ -1,3 +1,5 @@
+![ci build results](https://github.com/JuliusWiedemann/PythonCIExample/actions/workflows/python-ci/badge.svg)
+
 # 🏗️ Python Continuous Integration - Example 
 
 This repo shows a basic example of CI/CD in python with github actions
