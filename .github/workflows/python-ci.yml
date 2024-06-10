@@ -58,7 +58,7 @@ jobs:
         minColorRange: 50
         maxColorRange: 90
 
-    - name: Create Coverage Badge
+    - name: Create Pylint Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
