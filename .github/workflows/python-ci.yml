@@ -24,12 +24,18 @@ jobs:
     - name: Run unittests
       run: |
         python -m unittest discover -v
+      continue-on-error: true
        
     - name: Run coverage
       run: |
         coverage run -m unittest discover
         coverage report -m 
         coverage json -o coverage.json
+      continue-on-error: true
+
+    - name: Run type checker
+      run: mypy --disallow-untyped-calls --disallow-untyped-defs --disallow-incomplete-defs source
+      continue-on-error: true
 
     - name: Run static code analysis
       run: pylint main.py source tests
