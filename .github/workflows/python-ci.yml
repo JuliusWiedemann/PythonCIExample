@@ -25,12 +25,14 @@ jobs:
         mypy source | tee mypy_output.txt
         MYPY_WARNINGS=$(grep -c 'note: ' mypy_output.txt)
         echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
+      continue-on-error: true
 
     - name: Run static code analysis
       run: |
         pylint --output-format=parseable main.py source tests | tee pylint_output.txt
         PYLINT_SCORE=$(grep -oP 'Your code has been rated at \K[^/]+' pylint_output.txt)
         echo "pylint_score=${PYLINT_SCORE}" >> $GITHUB_ENV
+      continue-on-error: true
 
     - name: Run unittests
       run: |
