@@ -28,7 +28,19 @@ jobs:
     - name: Run coverage
       run: |
         coverage run -m unittest discover
-        coverage report -m 
+        coverage xml
+        coverage report -m  
 
     - name: Run static code analysis
       run: pylint main.py source tests
+
+    - name: Generate coverage badge
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        coverage-xml: coverage.xml
+
+    - name: Upload coverage badge
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-badge
+        path: badge-line.svg
