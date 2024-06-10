@@ -29,9 +29,26 @@ jobs:
       run: |
         coverage run -m unittest discover
         coverage report -m 
+        coverage json -o coverage.json
 
     - name: Run static code analysis
       run: pylint main.py source tests
+
+    - name: Parse coverage results
+      id: coverage
+      run: |
+        COVERAGE_PERCENT=$(python -c "import json; print(json.load(open('coverage.json'))['totals']['percent_covered'])")
+        echo "::set-output name=coverage::${COVERAGE_PERCENT}"
+
+    - name: Create Coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: d506acc54dead9ca1d070488e813d253
+        filename: coverage.json 
+        label: Coverage
+        message: ${{ steps.coverage.outputs.coverage }}%
+        color: green
 
     - name: Create Test Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
