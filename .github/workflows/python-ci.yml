@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python V3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
 
@@ -44,34 +44,34 @@ jobs:
       id: coverage
       run: |
         COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
-        echo "::set-output name=coverage::${COVERAGE_PERCENT}"
+        echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
 
     - name: Parse pylint results
       id: pylint
       run: |
         PYLINT_SCORE=$(pylint --output-format=parseable main.py source tests | grep -oP 'Your code has been rated at \K[^/]+')
-        echo "::set-output name=pylint_score::${PYLINT_SCORE}"
-
-    - name: Create Coverage Badge
+        echo "pylint_score=${PYLINT_SCORE}" >> $GITHUB_ENV
+  
+    - name: Create coverage badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: d506acc54dead9ca1d070488e813d253
         filename: coverage.json 
         label: Coverage
-        message: ${{ steps.coverage.outputs.coverage }}%
-        valColorRange: ${{ steps.coverage.outputs.coverage }}
+        message: ${{ env.coverage }}%
+        valColorRange: ${{ env.coverage }}%
         minColorRange: 50
         maxColorRange: 90
 
-    - name: Create Pylint Badge
+    - name: Create pylint badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: d506acc54dead9ca1d070488e813d253
         filename: pylint-score.json 
         label: Pylint Score
-        message: ${{ steps.pylint.outputs.pylint_score }}
-        valColorRange: ${{ steps.pylint.outputs.pylint_score }}
+        message: ${{ env.pylint_score }}
+        valColorRange: ${{ env.pylint_score }}
         minColorRange: 5
         maxColorRange: 9
