@@ -1,4 +1,4 @@
-![ci build results](https://github.com/JuliusWiedemann/PythonCIExample/actions/workflows/python-ci/badge.svg)
+![ci build results](https://github.com/JuliusWiedemann/PythonCIExample/actions/workflows/python-ci.yml/badge.svg)
 
 # 🏗️ Python Continuous Integration - Example 
 
