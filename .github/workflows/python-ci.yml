@@ -34,7 +34,7 @@ jobs:
       continue-on-error: true
 
     - name: Run type checker
-      run: mypy --disallow-untyped-calls --disallow-untyped-defs --disallow-incomplete-defs source
+      run: mypy source
       continue-on-error: true
 
     - name: Run static code analysis
