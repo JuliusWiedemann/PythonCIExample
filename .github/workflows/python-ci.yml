@@ -37,7 +37,7 @@ jobs:
     - name: Parse coverage results
       id: coverage
       run: |
-        COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered']))")
+        COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
         echo "::set-output name=coverage::${COVERAGE_PERCENT}"
 
     - name: Create Coverage Badge
@@ -48,7 +48,7 @@ jobs:
         filename: coverage.json 
         label: Coverage
         message: ${{ steps.coverage.outputs.coverage }}%
-        valColorRange: 70
+        valColorRange: ${{ steps.coverage.outputs.coverage }}
         minColorRange: 50
         maxColorRange: 90
 
