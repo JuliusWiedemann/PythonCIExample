@@ -50,7 +50,7 @@ class Pokemon:
                 print("Effective")
             elif attackFactor == 1:
                 print("Not very effective")
-            elif attackFactor == 3:
+            elif attackFactor == 4:
                 print("Very effective")
             opponent.receiveDamage(attackDamage)
             self.earnXp(attackDamage)
