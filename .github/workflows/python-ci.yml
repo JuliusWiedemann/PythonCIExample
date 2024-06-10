@@ -28,22 +28,7 @@ jobs:
     - name: Run coverage
       run: |
         coverage run -m unittest discover
-        coverage report -m > coverage.txt
+        coverage report -m 
 
     - name: Run static code analysis
       run: pylint main.py source tests
-
-    - name: Extract coverage percentage
-      id: extract_coverage
-      run: |
-        COVERAGE=$(grep -Po 'TOTAL.*?\K[\d.]+%' coverage.txt)
-        echo "coverage=${COVERAGE}" >> $GITHUB_ENV
-
-    - name: Create coverage badge
-      uses: schneegans/dynamic-badges-action@v1.5.0
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        label: coverage
-        message: ${{ env.coverage }}
-        color: ${{ env.coverage >= '80%' && 'green' || 'red' }}
-
