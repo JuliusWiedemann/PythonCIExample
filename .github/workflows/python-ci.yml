@@ -56,7 +56,9 @@ jobs:
         label: MyPy Warnings
         message: ${{ env.mypy_warnings }}
         valColorRange: ${{ env.mypy_warnings }}
-        maxColorRange: 10
+        minColorRange: 1
+        maxColorRange: 6
+        invertColorRange: true
 
     - name: Create pylint badge
       uses: schneegans/dynamic-badges-action@v1.7.0
