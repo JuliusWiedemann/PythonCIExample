@@ -40,6 +40,12 @@ jobs:
         COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
         echo "::set-output name=coverage::${COVERAGE_PERCENT}"
 
+    - name: Parse pylint results
+      id: pylint
+      run: |
+        PYLINT_SCORE=$(pylint --output-format=parseable main.py source tests | grep -oP 'Your code has been rated at \K[^/]+')
+        echo "::set-output name=pylint_score::${PYLINT_SCORE}"
+
     - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
@@ -52,12 +58,14 @@ jobs:
         minColorRange: 50
         maxColorRange: 90
 
-    - name: Create Test Badge
+    - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: d506acc54dead9ca1d070488e813d253
-        filename: test.json 
-        label: Hello
-        message: World
-        color: orange
+        filename: pylint-score.json 
+        label: Pylint Score
+        message: ${{ steps.pylint.outputs.pylint_score }}
+        valColorRange: ${{ steps.pylint.outputs.pylint_score }}
+        minColorRange: 5
+        maxColorRange: 9
