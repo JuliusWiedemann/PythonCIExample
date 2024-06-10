@@ -34,7 +34,7 @@ jobs:
       continue-on-error: true
 
     - name: Run type checker
-      run: mypy source
+      run: mypy source | tee mypy_output.txt
       continue-on-error: true
 
     - name: Run static code analysis
@@ -45,6 +45,12 @@ jobs:
       run: |
         COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
         echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
+
+    - name: Parse type checker results
+      id: mypy
+      run: |
+        MYPY_WARNINGS=$(grep -c 'note: ' mypy_output.txt)
+        echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
 
     - name: Parse pylint results
       id: pylint
@@ -63,6 +69,17 @@ jobs:
         valColorRange: ${{ env.coverage }}%
         minColorRange: 50
         maxColorRange: 90
+
+    - name: Create MyPy Warning Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: d506acc54dead9ca1d070488e813d253
+        filename: mypy_warnings.json 
+        label: MyPy Warnings
+        message: ${{ env.mypy_warnings }}
+        valColorRange: ${{ env.mypy_warnings }}
+        maxColorRange: 10
 
     - name: Create pylint badge
       uses: schneegans/dynamic-badges-action@v1.7.0
