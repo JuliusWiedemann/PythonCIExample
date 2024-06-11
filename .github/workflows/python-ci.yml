@@ -20,6 +20,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Set default environment variables
+      run: |
+        echo "mypy_warnings=failed" >> $GITHUB_ENV
+        echo "pylint_score=failed" >> $GITHUB_ENV
+        echo "coverage=failed" >> $GITHUB_ENV
+
     - name: Run type checker
       run: |
         mypy source | tee mypy_output.txt
