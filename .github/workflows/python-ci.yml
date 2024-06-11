@@ -28,7 +28,9 @@ jobs:
 
     - name: Run type checker
       run: |
-        mypy source
+        mypy source | tee mypy_output.txt
+        MYPY_WARNINGS=$(grep -oP '\b\d+(?= errors?)|\bno issues found\b' mypy_output.txt | tail -n1 | sed 's/\bno issues found\b/0/')
+        echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
       continue-on-error: true
 
     - name: Run static code analysis
