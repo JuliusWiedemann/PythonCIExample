@@ -28,12 +28,7 @@ jobs:
 
     - name: Run type checker
       run: |
-        mypy_output=$(mypy source > mypy_output.txt)
-        mypy_warnings=$(grep -oP "Found ([0-9]+) errors?" mypy_output.txt | grep -oP "[0-9]+")
-        if [ -z "$mypy_warnings" ]; then
-          mypy_warnings=0
-        fi
-        echo "mypy_warnings=${mypy_warnings}" >> $GITHUB_ENV
+        mypy source
       continue-on-error: true
 
     - name: Run static code analysis
