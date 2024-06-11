@@ -28,9 +28,8 @@ jobs:
 
     - name: Run type checker
       run: |
-        mypy source | tee mypy_output.txt
-        cat mypy_output.txt # DEBUG
-        MYPY_WARNINGS=$(grep -c 'note: ' mypy_output.txt)
+        MYPY_OUTPUT=$(mypy source)
+        MYPY_WARNINGS=$(echo "$MYPY_OUTPUT" | grep -c 'note: ')
         echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
       continue-on-error: true
 
