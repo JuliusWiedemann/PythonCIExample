@@ -34,10 +34,6 @@ class Pokemon:
         self._health += 10
 
     def attack(self, opponent: "Pokemon") -> None:
-        """
-        Attacks another pokemon by calculating the attack factor.
-        After the fight, the attacking pokemon receives XP.
-        """
         if not self._isAlive:
             print("Pokemon is dead already!")
         elif not opponent.getIsAlive():
@@ -84,7 +80,7 @@ class Pokemon:
     def getName(self) -> str:
         return self._name
 
-    def getPokeType(self) -> str:
+    def getPokeType(self) -> bool:
         return self._pokeType
 
     def getHealth(self) -> int:
