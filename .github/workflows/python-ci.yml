@@ -28,14 +28,12 @@ jobs:
 
     - name: Run type checker
       run: |
-        MYPY_OUTPUT=$(mypy source)
-        ERROR_COUNT=$(echo "$MYPY_OUTPUT" | grep -c 'error:')
-        if [ "$ERROR_COUNT" -eq 0 ]; then
-            ERROR_COUNT=0
-        else
-            ERROR_COUNT=$(echo "$MYPY_OUTPUT" | grep -c 'error:')
+        mypy_output=$(mypy source > mypy_output.txt)
+        mypy_warnings=$(grep -oP "Found ([0-9]+) errors?" mypy_output.txt | grep -oP "[0-9]+")
+        if [ -z "$mypy_warnings" ]; then
+          mypy_warnings=0
         fi
-        echo "mypy_warnings=${ERROR_COUNT}" >> $GITHUB_ENV
+        echo "mypy_warnings=${mypy_warnings}" >> $GITHUB_ENV
       continue-on-error: true
 
     - name: Run static code analysis
