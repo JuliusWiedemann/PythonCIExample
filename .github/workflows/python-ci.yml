@@ -22,13 +22,14 @@ jobs:
 
     - name: Set default environment variables
       run: |
-        echo "mypy_warnings=failed" >> $GITHUB_ENV
-        echo "pylint_score=failed" >> $GITHUB_ENV
-        echo "coverage=failed" >> $GITHUB_ENV
+        echo "mypy_warnings=INVALID" >> $GITHUB_ENV
+        echo "pylint_score=INVALID" >> $GITHUB_ENV
+        echo "coverage=INVALID" >> $GITHUB_ENV
 
     - name: Run type checker
       run: |
         mypy source | tee mypy_output.txt
+        cat mypy_output.txt # DEBUG
         MYPY_WARNINGS=$(grep -c 'note: ' mypy_output.txt)
         echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
       continue-on-error: true
@@ -54,6 +55,7 @@ jobs:
         echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
 
     - name: Create mypy warning badge
+      if: always()
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -65,8 +67,10 @@ jobs:
         minColorRange: 1
         maxColorRange: 6
         invertColorRange: true
+        color: ${{ env.mypy_warnings == 'INVALID' && 'red' || '' }}
 
     - name: Create pylint badge
+      if: always()
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -77,8 +81,10 @@ jobs:
         valColorRange: ${{ env.pylint_score }}
         minColorRange: 5
         maxColorRange: 9
+        color: ${{ env.pylint_score == 'INVALID' && 'red' || '' }}
 
     - name: Create coverage badge
+      if: always()
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -89,3 +95,4 @@ jobs:
         valColorRange: ${{ env.coverage }}%
         minColorRange: 50
         maxColorRange: 90
+        color: ${{ env.coverage == 'INVALID' && 'red' || '' }}
