@@ -29,8 +29,13 @@ jobs:
     - name: Run type checker
       run: |
         MYPY_OUTPUT=$(mypy source)
-        MYPY_WARNINGS=$(echo "$MYPY_OUTPUT" | grep -c 'note: ')
-        echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
+        ERROR_COUNT=$(echo "$MYPY_OUTPUT" | grep -c 'error:')
+        if [ "$ERROR_COUNT" -eq 0 ]; then
+            ERROR_COUNT=0
+        else
+            ERROR_COUNT=$(echo "$MYPY_OUTPUT" | grep -c 'error:')
+        fi
+        echo "mypy_warnings=${ERROR_COUNT}" >> $GITHUB_ENV
       continue-on-error: true
 
     - name: Run static code analysis
