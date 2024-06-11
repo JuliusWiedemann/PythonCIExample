@@ -67,7 +67,6 @@ jobs:
         minColorRange: 1
         maxColorRange: 6
         invertColorRange: true
-        color: ${{ env.mypy_warnings == 'INVALID' && 'red' || '' }}
 
     - name: Create pylint badge
       if: always()
@@ -81,7 +80,6 @@ jobs:
         valColorRange: ${{ env.pylint_score }}
         minColorRange: 5
         maxColorRange: 9
-        color: ${{ env.pylint_score == 'INVALID' && 'red' || '' }}
 
     - name: Create coverage badge
       if: always()
@@ -95,4 +93,3 @@ jobs:
         valColorRange: ${{ env.coverage }}%
         minColorRange: 50
         maxColorRange: 90
-        color: ${{ env.coverage == 'INVALID' && 'red' || '' }}
