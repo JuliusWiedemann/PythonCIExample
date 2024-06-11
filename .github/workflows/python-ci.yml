@@ -54,7 +54,7 @@ jobs:
         echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
 
     - name: Create mypy warning badge
-      if: always()
+      if: ${{ steps.branch_name.outputs.branch_name == 'main' }}
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -68,7 +68,7 @@ jobs:
         invertColorRange: true
 
     - name: Create pylint badge
-      if: always()
+      if: ${{ steps.branch_name.outputs.branch_name == 'main' }}
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
@@ -81,7 +81,7 @@ jobs:
         maxColorRange: 9
 
     - name: Create coverage badge
-      if: always()
+      if: ${{ steps.branch_name.outputs.branch_name == 'main' }}
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}

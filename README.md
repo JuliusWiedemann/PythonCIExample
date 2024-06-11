@@ -1,3 +1,4 @@
+![Main Branch Buildresults](https://img.shields.io/badge/Main%20Branch%20Buildresults:-blue)
 ![ci build results](https://github.com/JuliusWiedemann/PythonCIExample/actions/workflows/python-ci.yml/badge.svg)
 ![pylint-score](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/JuliusWiedemann/d506acc54dead9ca1d070488e813d253/raw/pylint-score.json)
 ![mypy-warnings](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/JuliusWiedemann/d506acc54dead9ca1d070488e813d253/raw/mypy_warnings.json)
