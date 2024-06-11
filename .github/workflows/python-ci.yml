@@ -1,18 +1,17 @@
 name: Python CI Example
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Set up Python V3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.11
 
@@ -21,14 +20,75 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Set default environment variables
+      run: |
+        echo "mypy_warnings=INVALID" >> $GITHUB_ENV
+        echo "pylint_score=INVALID" >> $GITHUB_ENV
+        echo "coverage=INVALID" >> $GITHUB_ENV
+
+    - name: Run type checker
+      run: |
+        mypy source | tee mypy_output.txt
+        MYPY_WARNINGS=$(grep -oP '\b\d+(?= errors?)|\bno issues found\b' mypy_output.txt | tail -n1 | sed 's/\bno issues found\b/0/')
+        echo "mypy_warnings=${MYPY_WARNINGS}" >> $GITHUB_ENV
+      continue-on-error: true
+
+    - name: Run static code analysis
+      run: |
+        pylint --output-format=parseable main.py source tests | tee pylint_output.txt
+        PYLINT_SCORE=$(grep -oP 'Your code has been rated at \K[^/]+' pylint_output.txt)
+        echo "pylint_score=${PYLINT_SCORE}" >> $GITHUB_ENV
+      continue-on-error: true
+
     - name: Run unittests
       run: |
         python -m unittest discover -v
-       
+
     - name: Run coverage
       run: |
         coverage run -m unittest discover
         coverage report -m 
+        coverage json -o coverage.json
 
-    - name: Run static code analysis
-      run: pylint main.py source tests
+        COVERAGE_PERCENT=$(python -c "import json; print(round(json.load(open('coverage.json'))['totals']['percent_covered'], 2))")
+        echo "coverage=${COVERAGE_PERCENT}" >> $GITHUB_ENV
+
+    - name: Create mypy warning badge
+      if: always()
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: d506acc54dead9ca1d070488e813d253
+        filename: mypy_warnings.json 
+        label: MyPy Warnings
+        message: ${{ env.mypy_warnings }}
+        valColorRange: ${{ env.mypy_warnings }}
+        minColorRange: 1
+        maxColorRange: 6
+        invertColorRange: true
+
+    - name: Create pylint badge
+      if: always()
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: d506acc54dead9ca1d070488e813d253
+        filename: pylint-score.json 
+        label: Pylint Score
+        message: ${{ env.pylint_score }}
+        valColorRange: ${{ env.pylint_score }}
+        minColorRange: 5
+        maxColorRange: 9
+
+    - name: Create coverage badge
+      if: always()
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: d506acc54dead9ca1d070488e813d253
+        filename: coverage.json 
+        label: Coverage
+        message: ${{ env.coverage }}%
+        valColorRange: ${{ env.coverage }}%
+        minColorRange: 50
+        maxColorRange: 90
